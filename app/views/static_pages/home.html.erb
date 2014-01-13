@@ -1,6 +1,12 @@
 <% if signed_in? %>
   <div class="row">
-    <aside class="span4">
+    <div class="col-xs-12">
+      <h3>Micropost Feed</h3>
+      <br>
+    </div>
+  </div>
+  <div class="row">
+    <aside class="col-md-4">
       <section>
         <%= render 'shared/user_info' %>
       </section>
@@ -11,24 +17,23 @@
         <%= render 'shared/micropost_form' %>
       </section>
     </aside>
-    <div class="span8">
-      <h3>Micropost Feed</h3>
+    <div class="col-md-4 ">
       <%= render 'shared/feed' %>
     </div>
-  </div>  
+  </div>
 <% else %>
-  <div class="center hero-unit">
-    <h1>Welcome to the Sample App</h1>
+  <div class="center jumbotron">
+    <h1>Welcome to the Events Project</h1>
 
     <h2>
       This is the home page for the
-      <a href="http://railstutorial.org/">Ruby on Rails Tutorial</a>
+      <a href="http://www.quickbunch.com" target="_blank">Events Project</a>
       sample application.
     </h2>
 
-    <%= link_to "Sign up now!", signup_path, 
+    <%= link_to "Sign up now!", signup_path,
                                 class: "btn btn-large btn-primary" %>
   </div>
 
   <%= link_to image_tag("rails.png", alt: "Rails"), 'http://rubyonrails.org/' %>
-<% end %> 
+<% end %>
