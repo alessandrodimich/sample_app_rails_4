@@ -8,26 +8,28 @@ module SessionsHelper
       cookies[:remember_token] = user.remember_token
     end
 
-    current_user = user
+    session[:remember_token] = user.remember_token
 
-    if cookies[:star_token]
-      user_star_token = User.find_by(star_token: cookies[:star_token])
+   # current_user = user
+
+    # if cookies[:star_token]
+    #   user_star_token = User.find_by(star_token: cookies[:star_token])
 
 
-      if user_star_token
-        unless user_star_token == current_user
-          cookies.delete(:star_token)
-          user.create_star_token
-          cookies[:star_token] = user.star_token
-        end
-      else
-        user.create_star_token
-        cookies[:star_token] = user.star_token
-      end
-    else
-      user.create_star_token
-      cookies[:star_token] = user.star_token
-    end
+    #   if user_star_token
+    #     unless user_star_token == current_user
+    #       cookies.delete(:star_token)
+    #       user.create_star_token
+    #       cookies[:star_token] = user.star_token
+    #     end
+    #   else
+    #     user.create_star_token
+    #     cookies[:star_token] = user.star_token
+    #   end
+    # else
+    #   user.create_star_token
+    #   cookies[:star_token] = user.star_token
+    # end
   end
 
 
@@ -57,6 +59,7 @@ module SessionsHelper
 
   def sign_out
     cookies.delete(:remember_token)
+    session[:remember_token] = nil
     self.current_user = nil
   end
 
