@@ -1,11 +1,36 @@
 module SessionsHelper
 
-  def sign_in(user)
-    remember_token = User.new_remember_token
-    cookies.permanent[:remember_token] = remember_token
-    user.update_attribute(:remember_token, User.encrypt(remember_token))
-    self.current_user = user
+  def sign_in(user,remember_me)
+    user.create_remember_token
+    if remember_me == "on"
+      cookies.permanent[:remember_token] = user.remember_token
+    else
+      cookies[:remember_token] = user.remember_token
+    end
+
+    current_user = user
+
+    if cookies[:star_token]
+      user_star_token = User.find_by(star_token: cookies[:star_token])
+
+
+      if user_star_token
+        unless user_star_token == current_user
+          cookies.delete(:star_token)
+          user.create_star_token
+          cookies[:star_token] = user.star_token
+        end
+      else
+        user.create_star_token
+        cookies[:star_token] = user.star_token
+      end
+    else
+      user.create_star_token
+      cookies[:star_token] = user.star_token
+    end
   end
+
+
 
   def signed_in?
     !current_user.nil?
@@ -16,8 +41,7 @@ module SessionsHelper
   end
 
   def current_user
-    remember_token  = User.encrypt(cookies[:remember_token])
-    @current_user ||= User.find_by(remember_token: remember_token)
+    @current_user ||= User.find_by(remember_token: cookies[:remember_token]) if cookies[:remember_token]
   end
 
   def current_user?(user)
@@ -32,7 +56,6 @@ module SessionsHelper
   end
 
   def sign_out
-    current_user.update_attribute(:remember_token, User.encrypt(User.new_remember_token))
     cookies.delete(:remember_token)
     self.current_user = nil
   end
