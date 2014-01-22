@@ -15,17 +15,6 @@ class User < ActiveRecord::Base
   has_secure_password
   validates :password, length: { minimum: 6 }
 
-
-  def create_remember_token
-    self.remember_token = Digest::SHA1.hexdigest(Time.now.to_f.to_s.sub(".", "") + self.email.to_s)
-    self.update_attribute(:remember_token, self.remember_token)
-  end
-
-  def destroy_remember_token
-    self.remember_token = ""
-    self.update_attribute(:remember_token, self.remember_token)
-  end
-
   def User.encrypt(token)
     Digest::SHA1.hexdigest(token.to_s)
   end
@@ -46,8 +35,9 @@ class User < ActiveRecord::Base
     relationships.find_by(followed_id: other_user.id).destroy!
   end
 
-  # Put private methods below
   private
 
-
+    def create_remember_token
+      self.remember_token = User.encrypt(User.new_remember_token)
+    end
 end

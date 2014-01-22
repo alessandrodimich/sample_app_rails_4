@@ -1,8 +1,9 @@
 module SessionsHelper
 
   def sign_in(user)
-    user.create_remember_token
-    cookies.permanent[:remember_token] = user.remember_token
+    remember_token = SecureRandom.urlsafe_base64 + Time.now.to_f.to_s.sub(".", "") + user.email.to_s
+    cookies.permanent[:remember_token] = remember_token
+    user.update_attribute(:remember_token, User.encrypt(remember_token))
     self.current_user = user
   end
 
@@ -29,9 +30,9 @@ module SessionsHelper
     end
   end
 
-  def sign_out(user)
+  def sign_out
+    current_user.update_attribute(:remember_token, User.encrypt(User.new_remember_token))
     cookies.delete(:remember_token)
-    user.destroy_remember_token
     self.current_user = nil
   end
 
