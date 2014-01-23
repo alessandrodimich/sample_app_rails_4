@@ -4,10 +4,9 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(email: params[:email])
+    user = User.find_by(email: params[:email].downcase)
     if user && user.authenticate(params[:password])
-      cookies.permanent[:user_id] = user.id
-      flash[:success] = "Logged in!"
+      sign_in user
       redirect_back_or user
     else
       flash.now[:danger] = 'Invalid email/password combination'
@@ -17,11 +16,6 @@ class SessionsController < ApplicationController
 
   def destroy
     sign_out
-    flash[:info] = 'Logged out!'
     redirect_to root_url
   end
-
-# def user_params
-#        params.require(:id)
-#     end
 end
