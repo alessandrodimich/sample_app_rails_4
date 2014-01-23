@@ -19,7 +19,10 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+<<<<<<< HEAD
     @user.password_confirmation = @user.password
+=======
+>>>>>>> parent of 2ba2a17... Revert e89b86d..b031a90
     if @user.save
       sign_in @user
       flash[:success] = "Welcome to Events Project!"
@@ -64,7 +67,8 @@ class UsersController < ApplicationController
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :password)
+      params.require(:user).permit(:name, :email, :password,
+                                   :password_confirmation)
     end
 
     # Before filters
