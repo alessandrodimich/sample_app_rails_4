@@ -19,10 +19,9 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    puts "-----------#{user_params}"
-    @user.password_confirmation = @user.password if @user.password
+    @user.password_confirmation = @user.password
     if @user.save
-      #sign_in(@user,"on")
+      sign_in @user
       flash[:success] = "Welcome to Events Project!"
       redirect_to @user
     else
