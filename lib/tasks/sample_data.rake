@@ -17,6 +17,8 @@ def make_users
     name  = Faker::Name.name
     email = "example-#{n+1}@railstutorial.org"
     password  = "password"
+    #remember_token = "remember_token#{n}"
+    #star_token = "star_token#{n}"
     User.create!(name:     name,
                  email:    email,
                  password: password,
@@ -25,7 +27,7 @@ def make_users
 end
 
 def make_microposts
-  users = User.all(limit: 6)
+  users = User.all(limit: 5)
   50.times do
     content = Faker::Lorem.sentence(5)
     users.each { |user| user.microposts.create!(content: content) }

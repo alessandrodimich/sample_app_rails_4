@@ -1,4 +1,7 @@
 class User < ActiveRecord::Base
+
+  has_secure_password
+
   has_many :microposts, dependent: :destroy
   has_many :relationships, foreign_key: "follower_id", dependent: :destroy
   has_many :followed_users, through: :relationships, source: :followed
@@ -7,6 +10,9 @@ class User < ActiveRecord::Base
                                    dependent:   :destroy
   has_many :followers, through: :reverse_relationships, source: :follower
 
+
+  before_create { create_remember_token }
+  #before_create { create_star_token }
   before_save { self.email = email.downcase }
 
 
@@ -14,19 +20,19 @@ class User < ActiveRecord::Base
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
   validates :email, presence: true, format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
-  has_secure_password
+
   validates :password, length: { minimum: 6 }
 
   #Session token
-  def create_remember_token
-    self.remember_token = Digest::SHA1.hexdigest(Time.now.to_f.to_s.sub(".", "") + self.email.to_s)
-    self.update_attribute(:remember_token, self.remember_token)
-  end
 
-  def create_star_token
-     self.star_token = Digest::SHA1.hexdigest(Time.now.to_f.to_s.sub(".", "") + self.email.to_s )
-     self.update_attribute(:star_token, self.star_token)
-  end
+
+  #Multipurpose browser permanent token
+  # def create_star_token
+  #    self.star_token = Digest::SHA1.hexdigest(Time.now.to_f.to_s.sub(".", "") + self.email.to_s )
+  #    self.update_attribute(:star_token, self.star_token)
+  # end
+
+
 
   def feed
     Micropost.from_users_followed_by(self)
@@ -51,9 +57,15 @@ class User < ActiveRecord::Base
       UserMailer.reset_password(self).deliver
   end
 
-  private
+#Private methods go below
+private
 
-     #Private methods go here
+  def create_remember_token
+    self.remember_token = Digest::SHA1.hexdigest(Time.now.to_f.to_s.sub(".", "") + self.email.to_s)
+    self.update_attribute(:remember_token, self.remember_token)
+  end
+
+
 
 
 end
