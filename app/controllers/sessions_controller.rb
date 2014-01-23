@@ -4,9 +4,9 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(email: params[:email].downcase)
+    user = User.find_by(email: params[:email])
     if user && user.authenticate(params[:password])
-      sign_in user
+      sign_in(user, params[:remember_me])
       redirect_back_or user
     else
       flash.now[:danger] = 'Invalid email/password combination'
@@ -18,4 +18,5 @@ class SessionsController < ApplicationController
     sign_out
     redirect_to root_url
   end
+
 end
